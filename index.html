@@ -452,8 +452,19 @@
         }
         .upvote-btn:hover:not(.voted) { background: rgba(0,0,0,0.14); }
         .upvote-btn:active:not(.voted) { transform: scale(1.1); }
-        .upvote-btn.voted { background: rgba(0,0,0,0.18); cursor: not-allowed; opacity: 0.7; }
+        /* voted style also used for own-note state */
+        .upvote-btn.voted {
+            background: rgba(0,0,0,0.18);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
         .upvote-btn.voted::after { content: '✓'; margin-left: 2px; font-size: 10px; }
+        /* own note — slightly different look so user understands why */
+        .upvote-btn.own-note {
+            background: rgba(0,0,0,0.04);
+            cursor: not-allowed;
+            opacity: 0.45;
+        }
         .upvote-btn.bounce { animation: voteBounce 0.35s ease; }
         @keyframes voteBounce {
             0%   { transform: scale(1); }
@@ -674,7 +685,7 @@
         </div>
         <div class="col-input">
             <textarea class="note-input" id="inputFix"
-                placeholder="Be honest - what needs fixing?"
+                placeholder="Be honest — what needs fixing?"
                 onkeydown="handleKey(event,'fix')"></textarea>
             <button class="add-btn" onclick="addNote('fix')">+</button>
         </div>
@@ -689,7 +700,7 @@
         </div>
         <div class="col-input">
             <textarea class="note-input" id="inputDream"
-                placeholder="Dream big - what would be Mega?"
+                placeholder="Dream big — what would be legendary?"
                 onkeydown="handleKey(event,'dream')"></textarea>
             <button class="add-btn" onclick="addNote('dream')">+</button>
         </div>
@@ -804,7 +815,6 @@ window.joinSession = function() {
     document.getElementById('userLabel').textContent      = currentUser;
     document.getElementById('userBadge').style.display    = 'flex';
     registerPresence();
-    // Re-render all cols so delete buttons reflect ownership
     COLS.forEach(render);
 };
 
@@ -819,7 +829,6 @@ window.changeUser = function() {
 window.handleKey = function(e, col) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addNote(col); }
 };
-
 window.addNote = function(col) {
     if (!currentUser) return;
     const inputEl = document.getElementById(`input${cap(col)}`);
@@ -832,11 +841,14 @@ window.addNote = function(col) {
     if (!running && timeLeft === 120) startTimerLocal();
 };
 
-// ── UPVOTE ─────────────────────────────────────────────────────
+// ── UPVOTE — blocked for own notes ────────────────────────────
 window.upvote = function(col, id) {
     if (!currentUser) return;
     const n = localNotes[col][id];
     if (!n) return;
+    // ── Guard 1: cannot vote on your own note ──
+    if (n.author === currentUser) return;
+    // ── Guard 2: cannot vote twice ──
     if ((n.voters || {})[safeKey(currentUser)]) return;
     update(ref(db, `notes/${col}/${id}`), {
         votes: (n.votes || 0) + 1,
@@ -844,10 +856,9 @@ window.upvote = function(col, id) {
     });
 };
 
-// ── DELETE — only allowed if note belongs to current user ──────
+// ── DELETE — only own notes ────────────────────────────────────
 window.del = function(col, id) {
     const n = localNotes[col][id];
-    // Guard: note must exist and belong to the current user
     if (!n || n.author !== currentUser) return;
     remove(ref(db, `notes/${col}/${id}`));
 };
@@ -886,16 +897,31 @@ function render(col) {
     }
 
     list.innerHTML = items.map(([id, n]) => {
-        const hasVoted   = currentUser ? !!(n.voters || {})[safeKey(currentUser)] : false;
-        const votedCls   = hasVoted ? 'voted' : '';
-        const votedTip   = hasVoted ? 'You already liked this!' : 'Like this idea';
-        const authorTag  =
+        const isOwner  = currentUser && n.author === currentUser;
+        const hasVoted = currentUser ? !!(n.voters || {})[safeKey(currentUser)] : false;
+
+        // ── Upvote button state ──────────────────────────────
+        // own note  → greyed out, "your idea" tooltip, no interaction
+        // voted     → ticked, "already liked" tooltip, no interaction
+        // default   → active, "like this" tooltip
+        let upvoteCls, upvoteTip;
+        if (isOwner) {
+            upvoteCls = 'own-note';
+            upvoteTip = 'This is your idea — you can\'t vote on your own';
+        } else if (hasVoted) {
+            upvoteCls = 'voted';
+            upvoteTip = 'You already liked this!';
+        } else {
+            upvoteCls = '';
+            upvoteTip = 'Like this idea';
+        }
+
+        const authorTag =
             `<span style="font-size:10px;opacity:0.55;font-weight:400;margin-left:4px;">` +
             `— ${esc(n.author || '?')}</span>`;
 
-        // ── Only show delete button if this note belongs to the current user ──
-        const isOwner  = currentUser && n.author === currentUser;
-        const delBtn   = isOwner
+        // ── Delete button — only for own notes ──────────────
+        const delBtn = isOwner
             ? `<button class="del-btn" onclick="del('${col}','${id}')" title="Delete your note">✕</button>`
             : '';
 
@@ -903,9 +929,10 @@ function render(col) {
         <div class="note-card">
             <div class="note-text">${esc(n.text)}${authorTag}</div>
             <div class="note-actions">
-                <button class="upvote-btn ${votedCls}" id="upbtn-${id}"
+                <button class="upvote-btn ${upvoteCls}"
+                    id="upbtn-${id}"
                     onclick="upvote('${col}','${id}')"
-                    title="${votedTip}">❤️ ${n.votes || 0}</button>
+                    title="${upvoteTip}">❤️ ${n.votes || 0}</button>
                 ${delBtn}
             </div>
         </div>`;

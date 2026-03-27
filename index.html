@@ -25,7 +25,11 @@
             background: var(--nn-grey);
             color: var(--nn-text);
             min-height: 100vh;
+            /* Prevent text size adjustment on iOS */
+            -webkit-text-size-adjust: 100%;
         }
+
+        /* ── CONNECTION BANNER ── */
         .conn-banner {
             position: fixed;
             top: 0; left: 0; right: 0;
@@ -48,6 +52,8 @@
             from { opacity: 1; transform: translateY(0); }
             to   { opacity: 0; transform: translateY(-100%); pointer-events: none; }
         }
+
+        /* ── MODAL ── */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -56,25 +62,26 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
         .modal {
             background: white;
             border-radius: 16px;
-            padding: 40px 44px;
+            padding: 36px 32px;
             max-width: 420px;
-            width: 90%;
+            width: 100%;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.2);
         }
         .modal .modal-emoji { font-size: 40px; margin-bottom: 14px; }
-        .modal h2 { font-size: 22px; font-weight: 800; color: var(--nn-blue); margin-bottom: 8px; }
-        .modal p { font-size: 13px; color: var(--nn-muted); margin-bottom: 24px; line-height: 1.6; }
+        .modal h2 { font-size: 20px; font-weight: 800; color: var(--nn-blue); margin-bottom: 8px; }
+        .modal p  { font-size: 13px; color: var(--nn-muted); margin-bottom: 24px; line-height: 1.6; }
         .modal input {
             width: 100%;
             border: 1.5px solid #E5E7EB;
             border-radius: 8px;
-            padding: 12px 14px;
-            font-size: 14px;
+            padding: 14px;
+            font-size: 16px; /* 16px prevents iOS auto-zoom */
             font-family: inherit;
             color: var(--nn-text);
             margin-bottom: 12px;
@@ -88,43 +95,67 @@
             color: white;
             border: none;
             border-radius: 8px;
-            padding: 13px;
-            font-size: 14px;
+            padding: 15px;
+            font-size: 15px;
             font-weight: 700;
             cursor: pointer;
             transition: opacity 0.2s;
+            /* Better tap target on mobile */
+            min-height: 50px;
         }
         .modal-btn:hover { opacity: 0.88; }
+
+        /* ── HEADER ── */
         .header {
             background: var(--nn-blue);
-            padding: 36px 60px;
+            padding: 24px 20px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 16px;
         }
+        .header-left { flex: 1; min-width: 0; }
         .header-left .eyebrow {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             color: rgba(255,255,255,0.45);
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
-        .header-left h1 { font-size: 32px; font-weight: 800; color: var(--nn-white); line-height: 1.2; }
+        .header-left h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--nn-white);
+            line-height: 1.2;
+        }
         .header-left h1 span { color: var(--nn-red); }
-        .header-left .tagline { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 6px; font-weight: 400; }
-        .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+        .header-left .tagline {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 5px;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+        .header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        /* ── USER BADGE ── */
         .user-badge {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             background: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.18);
             border-radius: 8px;
-            padding: 7px 14px;
-            font-size: 12px;
+            padding: 6px 10px;
+            font-size: 11px;
             color: rgba(255,255,255,0.75);
             font-weight: 500;
         }
@@ -134,89 +165,146 @@
             border: none;
             color: rgba(255,255,255,0.45);
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
             padding: 0;
-            margin-left: 4px;
+            margin-left: 2px;
             text-decoration: underline;
             font-family: inherit;
         }
         .user-badge .change-user:hover { color: white; }
+
+        /* ── ONLINE BADGE ── */
         .online-badge {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             background: rgba(255,255,255,0.07);
             border: 1px solid rgba(255,255,255,0.12);
             border-radius: 8px;
-            padding: 6px 12px;
+            padding: 5px 10px;
             font-size: 11px;
             color: rgba(255,255,255,0.6);
             font-weight: 500;
         }
         .online-dot {
-            width: 7px; height: 7px;
+            width: 6px; height: 6px;
             background: #10B981;
             border-radius: 50%;
             animation: pulse 2s infinite;
         }
         @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        /* ── TIMER ── */
         .timer-block {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             background: rgba(255,255,255,0.07);
             border: 1px solid rgba(255,255,255,0.12);
             border-radius: 10px;
-            padding: 12px 20px;
+            padding: 10px 14px;
         }
         .timer-display {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 800;
             color: white;
             font-variant-numeric: tabular-nums;
-            min-width: 70px;
+            min-width: 58px;
         }
         .timer-display.warning { color: #F6AD55; }
         .timer-display.danger  { color: var(--nn-red); animation: blink 0.6s infinite; }
         @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-        .timer-controls { display: flex; gap: 6px; }
+        .timer-controls { display: flex; gap: 5px; }
         .t-btn {
             border: none;
             border-radius: 6px;
-            padding: 6px 14px;
-            font-size: 12px;
+            padding: 6px 10px;
+            font-size: 11px;
             font-weight: 700;
             cursor: pointer;
             letter-spacing: 0.5px;
             transition: opacity 0.2s;
+            min-height: 32px;
         }
         .t-btn:hover { opacity: 0.85; }
         .t-btn.start { background: white; color: var(--nn-blue); }
         .t-btn.pause { background: #F6AD55; color: #1A1A1A; }
         .t-btn.reset { background: rgba(255,255,255,0.15); color: white; }
+
+        /* ── STATS STRIP ── */
         .stats-strip {
             background: white;
             border-bottom: 1px solid #E5E7EB;
-            padding: 14px 60px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
-            gap: 32px;
-            flex-wrap: wrap;
+            gap: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
-        .stat { display: flex; align-items: center; gap: 8px; }
-        .stat-num { font-size: 22px; font-weight: 800; color: var(--nn-blue); }
+        .stats-strip::-webkit-scrollbar { display: none; }
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            padding: 0 12px;
+        }
+        .stat:first-child { padding-left: 0; }
+        .stat-num { font-size: 20px; font-weight: 800; color: var(--nn-blue); }
         .stat-num.red   { color: var(--nn-red); }
         .stat-num.dream { color: var(--nn-blue-mid); }
-        .stat-lbl { font-size: 11px; font-weight: 600; color: var(--nn-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .stat-divider { width: 1px; height: 24px; background: #E5E7EB; }
+        .stat-lbl {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--nn-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            white-space: nowrap;
+        }
+        .stat-divider { width: 1px; height: 20px; background: #E5E7EB; flex-shrink: 0; }
+
+        /* ── COLUMN TABS (mobile navigation) ── */
+        .col-tabs {
+            display: none; /* shown only on mobile */
+            background: white;
+            border-bottom: 2px solid #E5E7EB;
+            padding: 0 16px;
+            gap: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .col-tabs::-webkit-scrollbar { display: none; }
+        .col-tab {
+            flex-shrink: 0;
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--nn-muted);
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .col-tab.active-love  { color: var(--love);        border-bottom-color: var(--love); }
+        .col-tab.active-fix   { color: var(--fix);         border-bottom-color: var(--fix); }
+        .col-tab.active-dream { color: var(--nn-blue-mid); border-bottom-color: var(--nn-blue-mid); }
+
+        /* ── BOARD ── */
         .board {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            padding: 28px 40px;
+            gap: 16px;
+            padding: 20px 16px;
             max-width: 1300px;
             margin: 0 auto;
         }
+
+        /* ── COLUMN ── */
         .col {
             background: white;
             border-radius: 14px;
@@ -225,17 +313,22 @@
             display: flex;
             flex-direction: column;
         }
-        .col-head { padding: 20px 22px 16px; border-bottom: 1px solid #F3F4F6; }
-        .col-head h2 { font-size: 16px; font-weight: 800; letter-spacing: 0.3px; }
-        .col-head p  { font-size: 12px; color: var(--nn-muted); margin-top: 3px; font-weight: 400; }
+        .col-head {
+            padding: 16px 16px 12px;
+            border-bottom: 1px solid #F3F4F6;
+        }
+        .col-head h2 { font-size: 14px; font-weight: 800; letter-spacing: 0.3px; }
+        .col-head p  { font-size: 11px; color: var(--nn-muted); margin-top: 3px; font-weight: 400; }
         .col.love  .col-head { border-top: 4px solid var(--love); }
         .col.fix   .col-head { border-top: 4px solid var(--fix);  }
         .col.dream .col-head { border-top: 4px solid var(--nn-blue-mid); }
         .col.love  .col-head h2 { color: var(--love); }
         .col.fix   .col-head h2 { color: var(--fix);  }
         .col.dream .col-head h2 { color: var(--nn-blue-mid); }
+
+        /* ── INPUT ── */
         .col-input {
-            padding: 14px 16px;
+            padding: 12px;
             background: #FAFAFA;
             border-bottom: 1px solid #F3F4F6;
             display: flex;
@@ -246,7 +339,7 @@
             border: 1px solid #E5E7EB;
             border-radius: 8px;
             padding: 10px 12px;
-            font-size: 13px;
+            font-size: 16px; /* 16px prevents iOS auto-zoom */
             font-family: inherit;
             resize: none;
             height: 52px;
@@ -269,22 +362,35 @@
             flex-shrink: 0;
             transition: opacity 0.2s, transform 0.15s;
             color: white;
+            /* Better tap feedback */
+            -webkit-tap-highlight-color: transparent;
         }
-        .add-btn:hover { opacity: 0.88; transform: scale(1.04); }
+        .add-btn:active { transform: scale(0.95); }
         .col.love  .add-btn { background: var(--love); }
         .col.fix   .add-btn { background: var(--fix);  }
         .col.dream .add-btn { background: var(--nn-blue-mid); }
+
+        /* ── NOTES ── */
         .notes-list {
             flex: 1;
-            padding: 14px 16px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             gap: 8px;
-            min-height: 280px;
+            min-height: 200px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
-        .empty { margin: auto; text-align: center; color: #D1D5DB; font-size: 12px; padding: 20px 10px; }
-        .empty span { font-size: 32px; display: block; margin-bottom: 8px; }
+        .empty {
+            margin: auto;
+            text-align: center;
+            color: #D1D5DB;
+            font-size: 12px;
+            padding: 16px 10px;
+        }
+        .empty span { font-size: 28px; display: block; margin-bottom: 6px; }
+
+        /* ── NOTE CARD ── */
         .note-card {
             border-radius: 8px;
             padding: 10px 12px;
@@ -303,8 +409,10 @@
         .col.love  .note-card { background: #EEF4FF; color: var(--nn-blue); }
         .col.fix   .note-card { background: #FFF0F0; color: #9B1010; }
         .col.dream .note-card { background: #F0F4FF; color: var(--nn-blue); }
-        .note-text { flex: 1; }
+        .note-text { flex: 1; word-break: break-word; }
         .note-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+
+        /* ── UPVOTE ── */
         .upvote-btn {
             display: flex;
             align-items: center;
@@ -312,14 +420,17 @@
             border: none;
             background: rgba(0,0,0,0.07);
             border-radius: 20px;
-            padding: 3px 8px;
+            padding: 5px 10px;
             font-size: 11px;
             font-weight: 700;
             cursor: pointer;
             transition: background 0.2s, transform 0.15s;
             color: inherit;
+            min-height: 32px; /* better tap target */
+            -webkit-tap-highlight-color: transparent;
         }
         .upvote-btn:hover:not(.voted) { background: rgba(0,0,0,0.14); }
+        .upvote-btn:active:not(.voted) { transform: scale(1.1); }
         .upvote-btn.voted { background: rgba(0,0,0,0.18); cursor: not-allowed; opacity: 0.7; }
         .upvote-btn.voted::after { content: '✓'; margin-left: 2px; font-size: 10px; }
         .upvote-btn.bounce { animation: voteBounce 0.35s ease; }
@@ -336,16 +447,22 @@
             color: rgba(0,0,0,0.25);
             font-size: 14px;
             line-height: 1;
-            padding: 2px 4px;
+            padding: 4px 6px;
             border-radius: 4px;
             transition: color 0.2s;
+            min-height: 32px; /* better tap target */
+            display: flex;
+            align-items: center;
+            -webkit-tap-highlight-color: transparent;
         }
         .del-btn:hover { color: rgba(0,0,0,0.55); }
+
+        /* ── CLEAR BAR ── */
         .clear-bar {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            padding: 0 40px 32px;
+            gap: 8px;
+            padding: 0 16px 24px;
             flex-wrap: wrap;
         }
         .clr-btn {
@@ -355,11 +472,14 @@
             color: var(--nn-muted);
             font-size: 12px;
             font-weight: 600;
-            padding: 8px 18px;
+            padding: 10px 14px;
             cursor: pointer;
             transition: all 0.2s;
+            min-height: 40px;
         }
         .clr-btn:hover { border-color: var(--nn-red); color: var(--nn-red); }
+
+        /* ── FOOTER ── */
         .footer {
             text-align: center;
             padding: 16px;
@@ -368,31 +488,100 @@
             border-top: 1px solid #E5E7EB;
             background: white;
         }
-        @media (max-width: 800px) {
-            .board { grid-template-columns: 1fr; padding: 20px; }
-            .header { padding: 24px 20px; }
-            .stats-strip { padding: 12px 20px; }
-            .clear-bar { padding-left: 20px; padding-right: 20px; }
+
+        /* ════════════════════════════════════════
+           MOBILE STYLES  (max-width: 640px)
+        ════════════════════════════════════════ */
+        @media (max-width: 640px) {
+
+            /* Push content below the fixed banner */
+            body { padding-top: 36px; }
+
+            /* Header becomes more compact */
+            .header {
+                padding: 16px;
+                gap: 12px;
+            }
+            .header-left h1 { font-size: 18px; }
+            .header-left .tagline { display: none; } /* hide on very small screens */
+            .header-left .eyebrow { font-size: 8px; letter-spacing: 1.5px; }
+
+            /* Stack header right items */
+            .header-right { gap: 6px; }
+            .timer-display { font-size: 20px; min-width: 50px; }
+
+            /* Show tab navigation on mobile */
+            .col-tabs { display: flex; }
+
+            /* Board becomes single column with tab switching */
+            .board {
+                grid-template-columns: 1fr;
+                padding: 12px;
+                gap: 0;
+            }
+
+            /* Hide all columns by default on mobile */
+            .col { display: none; }
+
+            /* Show only the active column */
+            .col.active { display: flex; }
+
+            /* Full height notes on mobile */
+            .notes-list { min-height: 300px; }
+
+            /* Larger input text to prevent iOS zoom */
+            .note-input { font-size: 16px; height: 56px; }
+
+            /* Stats strip scrolls horizontally */
+            .stats-strip { padding: 10px 16px; }
+            .stat { padding: 0 10px; }
+            .stat-num { font-size: 18px; }
+
+            /* Clear buttons stack nicely */
+            .clear-bar { gap: 8px; padding: 12px 16px 20px; }
+            .clr-btn { font-size: 11px; padding: 10px 12px; }
+        }
+
+        /* TABLET (641px – 900px) */
+        @media (min-width: 641px) and (max-width: 900px) {
+            .header { padding: 24px; }
+            .board  { padding: 16px; gap: 12px; }
             .header-left h1 { font-size: 24px; }
+            .stats-strip { padding: 12px 24px; }
+            .clear-bar { padding-left: 16px; padding-right: 16px; }
+        }
+
+        /* DESKTOP (901px+) */
+        @media (min-width: 901px) {
+            .header { padding: 36px 60px; }
+            .header-left h1 { font-size: 32px; }
+            .stats-strip { padding: 14px 60px; }
+            .board { padding: 28px 40px; gap: 20px; }
+            .clear-bar { padding: 0 40px 32px; }
+            .col-tabs { display: none !important; }
+            .col { display: flex !important; } /* always show all cols on desktop */
         }
     </style>
 </head>
 <body>
 
+<!-- ── CONNECTION BANNER ── -->
 <div class="conn-banner connecting" id="connBanner">⏳ Connecting to live session...</div>
 
+<!-- ── NAME MODAL ── -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
         <div class="modal-emoji">👋</div>
         <h2>Welcome to <br>"Marketing Hearts"</h2>
         <p>This is a quick Feedback game with everyone sharing what's on their mind (as many as you like) and then voting on inputs of others (can only like an idea once). <strong>Enter your secret name if you would like to remain anonymous</strong>.</p>
-        <input type="text" id="nameInput" placeholder="Your first name..." maxlength="30"
-            onkeydown="if(event.key==='Enter') joinSession()" autofocus />
+        <input type="text" id="nameInput" placeholder="Your first name..."
+            maxlength="30" onkeydown="if(event.key==='Enter') joinSession()" autofocus />
         <div class="modal-error" id="modalError"></div>
         <button class="modal-btn" onclick="joinSession()">Let's Go ❤️</button>
     </div>
 </div>
 
+<!-- ── HEADER ── -->
 <div class="header">
     <div class="header-left">
         <div class="eyebrow">Novo Nordisk · Swiss Marketing Team · 1 April 2025</div>
@@ -401,7 +590,7 @@
     </div>
     <div class="header-right">
         <div class="user-badge" id="userBadge" style="display:none">
-            👤 Signed in as <strong id="userLabel"></strong>
+            👤 <strong id="userLabel"></strong>
             <button class="change-user" onclick="changeUser()">change</button>
         </div>
         <div class="online-badge">
@@ -422,6 +611,14 @@
     </div>
 </div>
 
+<!-- ── COLUMN TABS (mobile only) ── -->
+<div class="col-tabs" id="colTabs">
+    <button class="col-tab active-love" onclick="switchTab('love')">😍 Keep It</button>
+    <button class="col-tab" onclick="switchTab('fix')">😤 Fix It</button>
+    <button class="col-tab" onclick="switchTab('dream')">🚀 Dream It</button>
+</div>
+
+<!-- ── STATS ── -->
 <div class="stats-strip">
     <div class="stat">
         <div class="stat-num" id="cntLove">0</div>
@@ -444,8 +641,9 @@
     </div>
 </div>
 
+<!-- ── BOARD ── -->
 <div class="board">
-    <div class="col love">
+    <div class="col love active" id="colLove">
         <div class="col-head">
             <h2>KEEP IT</h2>
             <p>What's working great in our team?</p>
@@ -460,7 +658,7 @@
             <div class="empty"><span>😍</span>Be first to share!</div>
         </div>
     </div>
-    <div class="col fix">
+    <div class="col fix" id="colFix">
         <div class="col-head">
             <h2>FIX IT</h2>
             <p>What frustrates you right now?</p>
@@ -475,7 +673,7 @@
             <div class="empty"><span>😤</span>Be first to share!</div>
         </div>
     </div>
-    <div class="col dream">
+    <div class="col dream" id="colDream">
         <div class="col-head">
             <h2>DREAM IT</h2>
             <p>What would make us legendary?</p>
@@ -492,6 +690,7 @@
     </div>
 </div>
 
+<!-- ── CLEAR BAR ── -->
 <div class="clear-bar">
     <button class="clr-btn" onclick="clearCol('love')">Clear 😍 Keep It</button>
     <button class="clr-btn" onclick="clearCol('fix')">Clear 😤 Fix It</button>
@@ -499,15 +698,14 @@
     <button class="clr-btn" onclick="clearAll()">Clear All</button>
 </div>
 
-<div class="footer">
-    NN CH · Marketing Team Meeting · April 1st 2025
-</div>
+<!-- ── FOOTER ── -->
+<div class="footer">NN CH · Marketing Team Meeting · April 1st 2025</div>
 
+<!-- ── FIREBASE ── -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-    getDatabase, ref, push, remove, update,
-    onValue, onDisconnect, set
+    getDatabase, ref, push, remove, update, onValue, onDisconnect, set
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -533,13 +731,14 @@ let presenceKey = null;
 let timeLeft    = 120;
 let timerInt    = null;
 let running     = false;
+let activeTab   = 'love'; // tracks current mobile tab
 
+// ── CONNECTION BANNER ──────────────────────────────────────────
 const connBanner = document.getElementById('connBanner');
-
 onValue(ref(db, '.info/connected'), snap => {
     if (snap.val() === true) {
-        connBanner.textContent = '✅ Connected — live session active';
-        connBanner.className   = 'conn-banner connected';
+        connBanner.textContent     = '✅ Connected — live session active';
+        connBanner.className       = 'conn-banner connected';
         connBanner.style.animation = '';
         if (currentUser) registerPresence();
     } else {
@@ -549,30 +748,42 @@ onValue(ref(db, '.info/connected'), snap => {
     }
 });
 
+// ── PRESENCE ──────────────────────────────────────────────────
 function registerPresence() {
     if (!currentUser) return;
     const myRef = push(onlineRef, { name: currentUser });
     presenceKey = myRef.key;
     onDisconnect(myRef).remove();
 }
-
 function unregisterPresence() {
-    if (presenceKey) {
-        remove(ref(db, `online/${presenceKey}`));
-        presenceKey = null;
-    }
+    if (presenceKey) { remove(ref(db, `online/${presenceKey}`)); presenceKey = null; }
 }
-
 onValue(onlineRef, snap => {
-    const data  = snap.val() || {};
-    const count = Object.keys(data).length;
-    document.getElementById('onlineCount').textContent = count;
+    document.getElementById('onlineCount').textContent =
+        Object.keys(snap.val() || {}).length;
 });
 
+// ── MOBILE TAB SWITCHING ───────────────────────────────────────
+window.switchTab = function(col) {
+    activeTab = col;
+    // Update column visibility
+    COLS.forEach(c => {
+        document.getElementById(`col${cap(c)}`).classList.toggle('active', c === col);
+    });
+    // Update tab button styles
+    const tabs = document.querySelectorAll('.col-tab');
+    tabs.forEach((t, i) => {
+        const c = COLS[i];
+        t.className = 'col-tab' + (c === col ? ` active-${c}` : '');
+    });
+};
+
+// ── SESSION / MODAL ────────────────────────────────────────────
 window.joinSession = function() {
     const val = document.getElementById('nameInput').value.trim();
     if (!val) {
-        document.getElementById('modalError').textContent = 'Please enter your name to continue.';
+        document.getElementById('modalError').textContent =
+            'Please enter your name to continue.';
         return;
     }
     unregisterPresence();
@@ -585,12 +796,13 @@ window.joinSession = function() {
 };
 
 window.changeUser = function() {
-    document.getElementById('nameInput').value         = currentUser || '';
-    document.getElementById('modalError').textContent  = '';
+    document.getElementById('nameInput').value            = currentUser || '';
+    document.getElementById('modalError').textContent     = '';
     document.getElementById('modalOverlay').style.display = 'flex';
     setTimeout(() => document.getElementById('nameInput').focus(), 50);
 };
 
+// ── ADD NOTE ───────────────────────────────────────────────────
 window.handleKey = function(e, col) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addNote(col); }
 };
@@ -601,41 +813,40 @@ window.addNote = function(col) {
     const txt     = inputEl.value.trim();
     if (!txt) return;
     push(ref(db, `notes/${col}`), {
-        text:   txt,
-        author: currentUser,
-        votes:  0,
-        voters: {}
+        text: txt, author: currentUser, votes: 0, voters: {}
     });
     inputEl.value = '';
     if (!running && timeLeft === 120) startTimerLocal();
 };
 
+// ── UPVOTE ─────────────────────────────────────────────────────
 window.upvote = function(col, id) {
     if (!currentUser) return;
     const n = localNotes[col][id];
     if (!n) return;
-    const voters = n.voters || {};
-    if (voters[safeKey(currentUser)]) return;
+    if ((n.voters || {})[safeKey(currentUser)]) return;
     update(ref(db, `notes/${col}/${id}`), {
         votes: (n.votes || 0) + 1,
         [`voters/${safeKey(currentUser)}`]: true
     });
 };
 
+// ── DELETE ─────────────────────────────────────────────────────
 window.del = function(col, id) {
     remove(ref(db, `notes/${col}/${id}`));
 };
 
+// ── CLEAR ──────────────────────────────────────────────────────
 window.clearCol = function(col) {
     if (!confirm('Clear this column?')) return;
     set(ref(db, `notes/${col}`), null);
 };
-
 window.clearAll = function() {
     if (!confirm('Clear all notes?')) return;
     set(notesRef, null);
 };
 
+// ── REAL-TIME LISTENERS ────────────────────────────────────────
 COLS.forEach(col => {
     onValue(ref(db, `notes/${col}`), snap => {
         localNotes[col] = snap.val() || {};
@@ -644,22 +855,24 @@ COLS.forEach(col => {
     });
 });
 
+// ── RENDER ─────────────────────────────────────────────────────
 function render(col) {
     const list  = document.getElementById(`notes${cap(col)}`);
-    const data  = localNotes[col];
-    const items = Object.entries(data);
+    const items = Object.entries(localNotes[col]);
     items.sort((a, b) => (b[1].votes || 0) - (a[1].votes || 0));
     if (!items.length) {
         const icons = { love: '😍', fix: '😤', dream: '🚀' };
-        list.innerHTML = `<div class="empty"><span>${icons[col]}</span>Be first to share!</div>`;
+        list.innerHTML =
+            `<div class="empty"><span>${icons[col]}</span>Be first to share!</div>`;
         return;
     }
     list.innerHTML = items.map(([id, n]) => {
-        const voters   = n.voters || {};
-        const hasVoted = currentUser ? !!voters[safeKey(currentUser)] : false;
-        const votedCls = hasVoted ? 'voted' : '';
-        const votedTip = hasVoted ? 'You already liked this!' : 'Like this idea';
-        const authorTag = `<span style="font-size:10px;opacity:0.55;font-weight:400;margin-left:4px;">— ${esc(n.author || '?')}</span>`;
+        const hasVoted  = currentUser ? !!(n.voters || {})[safeKey(currentUser)] : false;
+        const votedCls  = hasVoted ? 'voted' : '';
+        const votedTip  = hasVoted ? 'You already liked this!' : 'Like this idea';
+        const authorTag =
+            `<span style="font-size:10px;opacity:0.55;font-weight:400;margin-left:4px;">` +
+            `— ${esc(n.author || '?')}</span>`;
         return `
         <div class="note-card">
             <div class="note-text">${esc(n.text)}${authorTag}</div>
@@ -675,6 +888,7 @@ function render(col) {
     }).join('');
 }
 
+// ── STATS ──────────────────────────────────────────────────────
 function updateStats() {
     const lv = Object.keys(localNotes.love).length;
     const fx = Object.keys(localNotes.fix).length;
@@ -685,8 +899,8 @@ function updateStats() {
     document.getElementById('cntTotal').textContent = lv + fx + dr;
 }
 
+// ── TIMER ──────────────────────────────────────────────────────
 window.startTimer = startTimerLocal;
-
 function startTimerLocal() {
     if (running) return;
     running = true;
@@ -707,45 +921,37 @@ function startTimerLocal() {
         }
     }, 1000);
 }
-
 window.pauseTimer = function() {
-    clearInterval(timerInt);
-    running = false;
+    clearInterval(timerInt); running = false;
     document.getElementById('pauseBtn').style.display = 'none';
     document.getElementById('startBtn').style.display = 'inline-block';
     document.getElementById('startBtn').textContent   = '▶ Resume';
 };
-
 window.resetTimer = function() {
-    clearInterval(timerInt);
-    running  = false;
-    timeLeft = 120;
+    clearInterval(timerInt); running = false; timeLeft = 120;
     refreshTimer();
     document.getElementById('timerDisplay').className = 'timer-display';
     document.getElementById('pauseBtn').style.display = 'none';
     document.getElementById('startBtn').style.display = 'inline-block';
     document.getElementById('startBtn').textContent   = '▶ Start';
 };
-
 function refreshTimer() {
-    const m  = Math.floor(timeLeft / 60);
-    const s  = timeLeft % 60;
+    const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
     const el = document.getElementById('timerDisplay');
-    el.textContent = `${m}:${String(s).padStart(2, '0')}`;
+    el.textContent = `${m}:${String(s).padStart(2,'0')}`;
     el.className   = timeLeft <= 10 ? 'timer-display danger'
                    : timeLeft <= 30 ? 'timer-display warning'
                    : 'timer-display';
 }
 
+// ── HELPERS ────────────────────────────────────────────────────
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 function esc(t) {
     const d = document.createElement('div');
     d.appendChild(document.createTextNode(t));
     return d.innerHTML;
 }
-function safeKey(name) {
-    return name.replace(/[.#$\/\[\]]/g, '_');
-}
+function safeKey(name) { return name.replace(/[.#$\/\[\]]/g, '_'); }
 </script>
 </body>
 </html>

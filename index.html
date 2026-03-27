@@ -25,7 +25,6 @@
             background: var(--nn-grey);
             color: var(--nn-text);
             min-height: 100vh;
-            /* Prevent text size adjustment on iOS */
             -webkit-text-size-adjust: 100%;
         }
 
@@ -81,7 +80,7 @@
             border: 1.5px solid #E5E7EB;
             border-radius: 8px;
             padding: 14px;
-            font-size: 16px; /* 16px prevents iOS auto-zoom */
+            font-size: 16px;
             font-family: inherit;
             color: var(--nn-text);
             margin-bottom: 12px;
@@ -100,7 +99,6 @@
             font-weight: 700;
             cursor: pointer;
             transition: opacity 0.2s;
-            /* Better tap target on mobile */
             min-height: 50px;
         }
         .modal-btn:hover { opacity: 0.88; }
@@ -233,8 +231,8 @@
 
         /* ── STATS STRIP ── */
         .stats-strip {
-            background: white;
-            border-bottom: 1px solid #E5E7EB;
+            background: var(--nn-blue-light);
+            border-bottom: 1px solid #D0D9F5;
             padding: 12px 16px;
             display: flex;
             align-items: center;
@@ -258,41 +256,67 @@
         .stat-lbl {
             font-size: 10px;
             font-weight: 600;
-            color: var(--nn-muted);
+            color: var(--nn-blue);
             text-transform: uppercase;
             letter-spacing: 0.8px;
             white-space: nowrap;
+            opacity: 0.7;
         }
-        .stat-divider { width: 1px; height: 20px; background: #E5E7EB; flex-shrink: 0; }
+        .stat-divider { width: 1px; height: 20px; background: #B8C6E8; flex-shrink: 0; }
 
-        /* ── COLUMN TABS (mobile navigation) ── */
+        /* ── COLUMN TABS ── */
         .col-tabs {
-            display: none; /* shown only on mobile */
+            display: none;
             background: white;
-            border-bottom: 2px solid #E5E7EB;
-            padding: 0 16px;
-            gap: 0;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .col-tabs::-webkit-scrollbar { display: none; }
-        .col-tab {
-            flex-shrink: 0;
             padding: 12px 16px;
+            gap: 10px;
+        }
+        /* Each tab is now a proper button card */
+        .col-tab {
+            flex: 1;
+            padding: 14px 8px;
             font-size: 13px;
             font-weight: 700;
             color: var(--nn-muted);
-            border: none;
-            background: none;
+            border: 2px solid #E5E7EB;
+            background: white;
+            border-radius: 12px;
             cursor: pointer;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
             transition: all 0.2s;
             font-family: inherit;
+            text-align: center;
+            line-height: 1.3;
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
-        .col-tab.active-love  { color: var(--love);        border-bottom-color: var(--love); }
-        .col-tab.active-fix   { color: var(--fix);         border-bottom-color: var(--fix); }
-        .col-tab.active-dream { color: var(--nn-blue-mid); border-bottom-color: var(--nn-blue-mid); }
+        .col-tab .tab-emoji { font-size: 22px; display: block; margin-bottom: 4px; }
+        .col-tab .tab-count {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 3px;
+            opacity: 0.6;
+        }
+        /* Active states per column */
+        .col-tab.active-love {
+            background: #EEF4FF;
+            border-color: var(--love);
+            color: var(--love);
+            box-shadow: 0 2px 8px rgba(0,71,187,0.15);
+        }
+        .col-tab.active-fix {
+            background: #FFF0F0;
+            border-color: var(--fix);
+            color: var(--fix);
+            box-shadow: 0 2px 8px rgba(226,0,26,0.15);
+        }
+        .col-tab.active-dream {
+            background: #EEF2FF;
+            border-color: var(--dream);
+            color: var(--dream);
+            box-shadow: 0 2px 8px rgba(0,25,101,0.15);
+        }
+        .col-tab:active { transform: scale(0.97); }
 
         /* ── BOARD ── */
         .board {
@@ -339,7 +363,7 @@
             border: 1px solid #E5E7EB;
             border-radius: 8px;
             padding: 10px 12px;
-            font-size: 16px; /* 16px prevents iOS auto-zoom */
+            font-size: 16px;
             font-family: inherit;
             resize: none;
             height: 52px;
@@ -362,7 +386,6 @@
             flex-shrink: 0;
             transition: opacity 0.2s, transform 0.15s;
             color: white;
-            /* Better tap feedback */
             -webkit-tap-highlight-color: transparent;
         }
         .add-btn:active { transform: scale(0.95); }
@@ -426,7 +449,7 @@
             cursor: pointer;
             transition: background 0.2s, transform 0.15s;
             color: inherit;
-            min-height: 32px; /* better tap target */
+            min-height: 32px;
             -webkit-tap-highlight-color: transparent;
         }
         .upvote-btn:hover:not(.voted) { background: rgba(0,0,0,0.14); }
@@ -450,7 +473,7 @@
             padding: 4px 6px;
             border-radius: 4px;
             transition: color 0.2s;
-            min-height: 32px; /* better tap target */
+            min-height: 32px;
             display: flex;
             align-items: center;
             -webkit-tap-highlight-color: transparent;
@@ -490,59 +513,53 @@
         }
 
         /* ════════════════════════════════════════
-           MOBILE STYLES  (max-width: 640px)
+           MOBILE  (max-width: 640px)
         ════════════════════════════════════════ */
         @media (max-width: 640px) {
-
-            /* Push content below the fixed banner */
             body { padding-top: 36px; }
 
-            /* Header becomes more compact */
+            /* Lean header — hide user badge and online badge */
             .header {
-                padding: 16px;
-                gap: 12px;
+                padding: 14px 16px;
+                gap: 10px;
+                align-items: center;
             }
-            .header-left h1 { font-size: 18px; }
-            .header-left .tagline { display: none; } /* hide on very small screens */
-            .header-left .eyebrow { font-size: 8px; letter-spacing: 1.5px; }
+            .user-badge  { display: none !important; }
+            .online-badge { display: none !important; }
 
-            /* Stack header right items */
-            .header-right { gap: 6px; }
+            .header-left .eyebrow { display: none; }
+            .header-left h1 { font-size: 16px; }
+            .header-left .tagline { display: none; }
+
             .timer-display { font-size: 20px; min-width: 50px; }
+            .t-btn { padding: 5px 8px; font-size: 10px; }
 
-            /* Show tab navigation on mobile */
+            /* Show tab buttons on mobile */
             .col-tabs { display: flex; }
 
-            /* Board becomes single column with tab switching */
+            /* Stats above tabs — compact */
+            .stats-strip { padding: 8px 12px; }
+            .stat { padding: 0 8px; }
+            .stat-num { font-size: 16px; }
+            .stat-lbl { font-size: 9px; }
+
+            /* Board single column */
             .board {
                 grid-template-columns: 1fr;
                 padding: 12px;
                 gap: 0;
             }
-
-            /* Hide all columns by default on mobile */
             .col { display: none; }
-
-            /* Show only the active column */
             .col.active { display: flex; }
-
-            /* Full height notes on mobile */
             .notes-list { min-height: 300px; }
-
-            /* Larger input text to prevent iOS zoom */
             .note-input { font-size: 16px; height: 56px; }
 
-            /* Stats strip scrolls horizontally */
-            .stats-strip { padding: 10px 16px; }
-            .stat { padding: 0 10px; }
-            .stat-num { font-size: 18px; }
-
-            /* Clear buttons stack nicely */
+            /* Clear buttons */
             .clear-bar { gap: 8px; padding: 12px 16px 20px; }
             .clr-btn { font-size: 11px; padding: 10px 12px; }
         }
 
-        /* TABLET (641px – 900px) */
+        /* ── TABLET (641–900px) ── */
         @media (min-width: 641px) and (max-width: 900px) {
             .header { padding: 24px; }
             .board  { padding: 16px; gap: 12px; }
@@ -551,7 +568,7 @@
             .clear-bar { padding-left: 16px; padding-right: 16px; }
         }
 
-        /* DESKTOP (901px+) */
+        /* ── DESKTOP (901px+) ── */
         @media (min-width: 901px) {
             .header { padding: 36px 60px; }
             .header-left h1 { font-size: 32px; }
@@ -559,7 +576,7 @@
             .board { padding: 28px 40px; gap: 20px; }
             .clear-bar { padding: 0 40px 32px; }
             .col-tabs { display: none !important; }
-            .col { display: flex !important; } /* always show all cols on desktop */
+            .col { display: flex !important; }
         }
     </style>
 </head>
@@ -589,11 +606,13 @@
         <div class="tagline">No filters. No politics. Just what you genuinely think and feel right now.</div>
     </div>
     <div class="header-right">
+        <!-- Hidden on mobile via CSS -->
         <div class="user-badge" id="userBadge" style="display:none">
             👤 <strong id="userLabel"></strong>
             <button class="change-user" onclick="changeUser()">change</button>
         </div>
-        <div class="online-badge">
+        <!-- Hidden on mobile via CSS -->
+        <div class="online-badge" id="onlineBadge">
             <div class="online-dot"></div>
             <span id="onlineCount">0</span> online
         </div>
@@ -611,14 +630,7 @@
     </div>
 </div>
 
-<!-- ── COLUMN TABS (mobile only) ── -->
-<div class="col-tabs" id="colTabs">
-    <button class="col-tab active-love" onclick="switchTab('love')">😍 Keep It</button>
-    <button class="col-tab" onclick="switchTab('fix')">😤 Fix It</button>
-    <button class="col-tab" onclick="switchTab('dream')">🚀 Dream It</button>
-</div>
-
-<!-- ── STATS ── -->
+<!-- ── STATS STRIP ── -->
 <div class="stats-strip">
     <div class="stat">
         <div class="stat-num" id="cntLove">0</div>
@@ -639,6 +651,25 @@
         <div class="stat-num" id="cntTotal">0</div>
         <div class="stat-lbl">Total Voices</div>
     </div>
+</div>
+
+<!-- ── COLUMN TABS (mobile only) ── -->
+<div class="col-tabs" id="colTabs">
+    <button class="col-tab active-love" id="tab-love" onclick="switchTab('love')">
+        <span class="tab-emoji">😍</span>
+        Keep It
+        <span class="tab-count" id="tabCount-love">0 notes</span>
+    </button>
+    <button class="col-tab" id="tab-fix" onclick="switchTab('fix')">
+        <span class="tab-emoji">😤</span>
+        Fix It
+        <span class="tab-count" id="tabCount-fix">0 notes</span>
+    </button>
+    <button class="col-tab" id="tab-dream" onclick="switchTab('dream')">
+        <span class="tab-emoji">🚀</span>
+        Dream It
+        <span class="tab-count" id="tabCount-dream">0 notes</span>
+    </button>
 </div>
 
 <!-- ── BOARD ── -->
@@ -731,7 +762,7 @@ let presenceKey = null;
 let timeLeft    = 120;
 let timerInt    = null;
 let running     = false;
-let activeTab   = 'love'; // tracks current mobile tab
+let activeTab   = 'love';
 
 // ── CONNECTION BANNER ──────────────────────────────────────────
 const connBanner = document.getElementById('connBanner');
@@ -766,17 +797,21 @@ onValue(onlineRef, snap => {
 // ── MOBILE TAB SWITCHING ───────────────────────────────────────
 window.switchTab = function(col) {
     activeTab = col;
-    // Update column visibility
     COLS.forEach(c => {
         document.getElementById(`col${cap(c)}`).classList.toggle('active', c === col);
-    });
-    // Update tab button styles
-    const tabs = document.querySelectorAll('.col-tab');
-    tabs.forEach((t, i) => {
-        const c = COLS[i];
-        t.className = 'col-tab' + (c === col ? ` active-${c}` : '');
+        const tab = document.getElementById(`tab-${c}`);
+        tab.className = 'col-tab' + (c === col ? ` active-${c}` : '');
     });
 };
+
+// ── UPDATE TAB COUNTS ──────────────────────────────────────────
+function updateTabCounts() {
+    COLS.forEach(col => {
+        const count = Object.keys(localNotes[col]).length;
+        const el    = document.getElementById(`tabCount-${col}`);
+        if (el) el.textContent = count === 1 ? '1 note' : `${count} notes`;
+    });
+}
 
 // ── SESSION / MODAL ────────────────────────────────────────────
 window.joinSession = function() {
@@ -852,6 +887,7 @@ COLS.forEach(col => {
         localNotes[col] = snap.val() || {};
         render(col);
         updateStats();
+        updateTabCounts();
     });
 });
 

@@ -271,7 +271,6 @@
             padding: 12px 16px;
             gap: 10px;
         }
-        /* Each tab is now a proper button card */
         .col-tab {
             flex: 1;
             padding: 14px 8px;
@@ -297,7 +296,6 @@
             margin-top: 3px;
             opacity: 0.6;
         }
-        /* Active states per column */
         .col-tab.active-love {
             background: #EEF4FF;
             border-color: var(--love);
@@ -463,6 +461,8 @@
             70%  { transform: scale(0.92); }
             100% { transform: scale(1); }
         }
+
+        /* ── DELETE BUTTON ── */
         .del-btn {
             border: none;
             background: transparent;
@@ -478,7 +478,7 @@
             align-items: center;
             -webkit-tap-highlight-color: transparent;
         }
-        .del-btn:hover { color: rgba(0,0,0,0.55); }
+        .del-btn:hover { color: var(--nn-red); }
 
         /* ── CLEAR BAR ── */
         .clear-bar {
@@ -512,54 +512,34 @@
             background: white;
         }
 
-        /* ════════════════════════════════════════
-           MOBILE  (max-width: 640px)
-        ════════════════════════════════════════ */
+        /* ════════════════════════════════
+           MOBILE  ≤ 640px
+        ════════════════════════════════ */
         @media (max-width: 640px) {
             body { padding-top: 36px; }
-
-            /* Lean header — hide user badge and online badge */
-            .header {
-                padding: 14px 16px;
-                gap: 10px;
-                align-items: center;
-            }
-            .user-badge  { display: none !important; }
+            .header { padding: 14px 16px; gap: 10px; align-items: center; }
+            .user-badge   { display: none !important; }
             .online-badge { display: none !important; }
-
             .header-left .eyebrow { display: none; }
             .header-left h1 { font-size: 16px; }
             .header-left .tagline { display: none; }
-
             .timer-display { font-size: 20px; min-width: 50px; }
             .t-btn { padding: 5px 8px; font-size: 10px; }
-
-            /* Show tab buttons on mobile */
             .col-tabs { display: flex; }
-
-            /* Stats above tabs — compact */
             .stats-strip { padding: 8px 12px; }
             .stat { padding: 0 8px; }
             .stat-num { font-size: 16px; }
             .stat-lbl { font-size: 9px; }
-
-            /* Board single column */
-            .board {
-                grid-template-columns: 1fr;
-                padding: 12px;
-                gap: 0;
-            }
+            .board { grid-template-columns: 1fr; padding: 12px; gap: 0; }
             .col { display: none; }
             .col.active { display: flex; }
             .notes-list { min-height: 300px; }
             .note-input { font-size: 16px; height: 56px; }
-
-            /* Clear buttons */
             .clear-bar { gap: 8px; padding: 12px 16px 20px; }
             .clr-btn { font-size: 11px; padding: 10px 12px; }
         }
 
-        /* ── TABLET (641–900px) ── */
+        /* ── TABLET 641–900px ── */
         @media (min-width: 641px) and (max-width: 900px) {
             .header { padding: 24px; }
             .board  { padding: 16px; gap: 12px; }
@@ -568,7 +548,7 @@
             .clear-bar { padding-left: 16px; padding-right: 16px; }
         }
 
-        /* ── DESKTOP (901px+) ── */
+        /* ── DESKTOP 901px+ ── */
         @media (min-width: 901px) {
             .header { padding: 36px 60px; }
             .header-left h1 { font-size: 32px; }
@@ -601,17 +581,15 @@
 <!-- ── HEADER ── -->
 <div class="header">
     <div class="header-left">
-        <div class="eyebrow">NN · CH Marketing Team · 1 April 2025</div>
+        <div class="eyebrow">Novo Nordisk · Swiss Marketing Team · 1 April 2025</div>
         <h1>Straight From the <span>Marketing Hearts</span> ❤️</h1>
         <div class="tagline">No filters. No politics. Just what you genuinely think and feel right now.</div>
     </div>
     <div class="header-right">
-        <!-- Hidden on mobile via CSS -->
         <div class="user-badge" id="userBadge" style="display:none">
             👤 <strong id="userLabel"></strong>
             <button class="change-user" onclick="changeUser()">change</button>
         </div>
-        <!-- Hidden on mobile via CSS -->
         <div class="online-badge" id="onlineBadge">
             <div class="online-dot"></div>
             <span id="onlineCount">0</span> online
@@ -730,9 +708,8 @@
 </div>
 
 <!-- ── FOOTER ── -->
-<div class="footer">· Made for marketing team, but everyone is welcome :) ·</div>
+<div class="footer">NN CH · Marketing Team Meeting · April 1st 2025</div>
 
-<!-- ── FIREBASE ── -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
@@ -827,6 +804,7 @@ window.joinSession = function() {
     document.getElementById('userLabel').textContent      = currentUser;
     document.getElementById('userBadge').style.display    = 'flex';
     registerPresence();
+    // Re-render all cols so delete buttons reflect ownership
     COLS.forEach(render);
 };
 
@@ -866,8 +844,11 @@ window.upvote = function(col, id) {
     });
 };
 
-// ── DELETE ─────────────────────────────────────────────────────
+// ── DELETE — only allowed if note belongs to current user ──────
 window.del = function(col, id) {
+    const n = localNotes[col][id];
+    // Guard: note must exist and belong to the current user
+    if (!n || n.author !== currentUser) return;
     remove(ref(db, `notes/${col}/${id}`));
 };
 
@@ -896,19 +877,28 @@ function render(col) {
     const list  = document.getElementById(`notes${cap(col)}`);
     const items = Object.entries(localNotes[col]);
     items.sort((a, b) => (b[1].votes || 0) - (a[1].votes || 0));
+
     if (!items.length) {
         const icons = { love: '😍', fix: '😤', dream: '🚀' };
         list.innerHTML =
             `<div class="empty"><span>${icons[col]}</span>Be first to share!</div>`;
         return;
     }
+
     list.innerHTML = items.map(([id, n]) => {
-        const hasVoted  = currentUser ? !!(n.voters || {})[safeKey(currentUser)] : false;
-        const votedCls  = hasVoted ? 'voted' : '';
-        const votedTip  = hasVoted ? 'You already liked this!' : 'Like this idea';
-        const authorTag =
+        const hasVoted   = currentUser ? !!(n.voters || {})[safeKey(currentUser)] : false;
+        const votedCls   = hasVoted ? 'voted' : '';
+        const votedTip   = hasVoted ? 'You already liked this!' : 'Like this idea';
+        const authorTag  =
             `<span style="font-size:10px;opacity:0.55;font-weight:400;margin-left:4px;">` +
             `— ${esc(n.author || '?')}</span>`;
+
+        // ── Only show delete button if this note belongs to the current user ──
+        const isOwner  = currentUser && n.author === currentUser;
+        const delBtn   = isOwner
+            ? `<button class="del-btn" onclick="del('${col}','${id}')" title="Delete your note">✕</button>`
+            : '';
+
         return `
         <div class="note-card">
             <div class="note-text">${esc(n.text)}${authorTag}</div>
@@ -916,9 +906,7 @@ function render(col) {
                 <button class="upvote-btn ${votedCls}" id="upbtn-${id}"
                     onclick="upvote('${col}','${id}')"
                     title="${votedTip}">❤️ ${n.votes || 0}</button>
-                <button class="del-btn"
-                    onclick="del('${col}','${id}')"
-                    title="Remove">✕</button>
+                ${delBtn}
             </div>
         </div>`;
     }).join('');
